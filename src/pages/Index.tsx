@@ -1,11 +1,48 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { useState } from "react";
+import { SearchBar } from "../components/SearchBar";
+import { ProductCard } from "../components/ProductCard";
+import { useSearch } from "../hooks/useSearch";
 
 const Index = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const { data, isLoading, error } = useSearch(searchQuery);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
+      <div className="container px-4 py-8">
+        <h1 className="text-4xl md:text-5xl font-bold text-center mb-8">
+          Découvrez vos aliments
+        </h1>
+        <SearchBar onSearch={setSearchQuery} />
+
+        {isLoading && (
+          <div className="mt-8 text-center text-gray-600">Chargement...</div>
+        )}
+
+        {error && (
+          <div className="mt-8 text-center text-red-500">
+            Une erreur est survenue lors de la recherche
+          </div>
+        )}
+
+        {data?.products && (
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {data.products.map((product) => (
+              <ProductCard
+                key={product.code}
+                product={product}
+                onClick={() => console.log("Product clicked:", product)}
+              />
+            ))}
+          </div>
+        )}
+
+        {searchQuery && data?.products?.length === 0 && (
+          <div className="mt-8 text-center text-gray-600">
+            Aucun produit trouvé pour "{searchQuery}"
+          </div>
+        )}
       </div>
     </div>
   );
