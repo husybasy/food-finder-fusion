@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { SearchResponse } from "../types/food";
 
 const OPEN_FOOD_FACTS_API = "https://world.openfoodfacts.org/api/v2";
+const CORS_PROXY = "https://corsproxy.io/?";
 
 export const useSearch = (query: string, page: number = 1) => {
   return useQuery({
@@ -13,9 +14,9 @@ export const useSearch = (query: string, page: number = 1) => {
       console.log("Searching for:", query);
       
       try {
-        const searchUrl = `${OPEN_FOOD_FACTS_API}/search?search_terms=${encodeURIComponent(
-          query
-        )}&page=${page}&page_size=24&fields=code,product_name,image_url,nutriscore_grade,ecoscore_grade,ingredients_text,nutrition_grades,nutriments`;
+        const searchUrl = `${CORS_PROXY}${encodeURIComponent(
+          `${OPEN_FOOD_FACTS_API}/search?search_terms=${encodeURIComponent(query)}&page=${page}&page_size=24&fields=code,product_name,image_url,nutriscore_grade,ecoscore_grade,ingredients_text,nutrition_grades,nutriments`
+        )}`;
         
         console.log("Search URL:", searchUrl);
         
