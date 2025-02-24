@@ -17,16 +17,21 @@ const Index = () => {
         <SearchBar onSearch={setSearchQuery} />
 
         {isLoading && (
-          <div className="mt-8 text-center text-gray-600">Chargement...</div>
+          <div className="mt-8 text-center text-gray-600">
+            Recherche en cours...
+          </div>
         )}
 
         {error && (
           <div className="mt-8 text-center text-red-500">
-            Une erreur est survenue lors de la recherche
+            Une erreur est survenue lors de la recherche. Veuillez réessayer.
+            {error instanceof Error && (
+              <div className="text-sm mt-2">{error.message}</div>
+            )}
           </div>
         )}
 
-        {data?.products && (
+        {data?.products && data.products.length > 0 && (
           <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {data.products.map((product) => (
               <ProductCard

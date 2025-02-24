@@ -9,16 +9,34 @@ export const useSearch = (query: string, page: number = 1) => {
     queryKey: ["products", query, page],
     queryFn: async () => {
       if (!query) return null;
-      const response = await fetch(
-        `${OPEN_FOOD_FACTS_API}/search?search_terms=${encodeURIComponent(
+
+      console.log("Searching for:", query);
+      
+      try {
+        const searchUrl = `${OPEN_FOOD_FACTS_API}/search?search_terms=${encodeURIComponent(
           query
-        )}&page=${page}&page_size=24&fields=code,product_name,image_url,nutriscore_grade,ecoscore_grade,ingredients_text,nutrition_grades,nutriments`
-      );
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
+        )}&page=${page}&page_size=24&fields=code,product_name,image_url,nutriscore_grade,ecoscore_grade,ingredients_text,nutrition_grades,nutriments`;
+        
+        console.log("Search URL:", searchUrl);
+        
+        const response = await fetch(searchUrl);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json() as SearchResponse;
+        console.log("Search results:", data);
+        
+        return data;
+      } catch (error) {
+        console.error("Search error:", error);
+        throw error;
       }
-      return response.json() as Promise<SearchResponse>;
     },
     enabled: !!query,
+    retry: 2,
+    staleTime: 30000, // Cache results for 30 seconds
+    refetchOnWindowFocus: false,
   });
 };
